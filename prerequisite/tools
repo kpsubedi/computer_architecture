@@ -1,0 +1,7 @@
+1. Linux/UNIX System
+2. text editor (prefer vi)
+3. compiler e.g., gcc ==> man gcc 
+4. debugger e.g., gdb ==> man gdb
+5. assembler e.g., nasm ==> man as
+6. loader e.g., ld  ==> man ld
+
