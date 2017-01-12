@@ -1,0 +1,24 @@
+What is Assembly Language?
+- Low-level programming language
+- Communicate with microprocessor
+- Specific to the processor family
+- An almost one-to-one correspondence with machine code
+
+
+CPU 
+- Only Speak binary 0010000100101010010101
+
+
+Assembly Language 
+- acts as bridge 
+
+Assembly Language --------|\
+		  --------|/   Machine Language
+		Assembler 
+		    +
+		Linker
+
+
+Correlation with High Level Languages (HLLs)
+--------------------------------------------
+	
