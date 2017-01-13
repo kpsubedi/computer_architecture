@@ -1,1 +1,5 @@
 What do linkers and loaders do?
+
+- Basic job of any linker or loader is simple: it binds more abstract names to more concrete names, 
+which permits programmers to write code using the more abstract names.
+- For example, 
