@@ -1,3 +1,16 @@
 
 Linux/UNIX 64-bit Edition
 Virtual Box/ VMPlayer
+
+
+Install nasm, build-essential
+
+# apt-get install nasm build-essential
+
+[null@architecture/linux_assembly$ nasm
+nasm: error: no input file specified
+type `nasm -h' for help
+
+[null@architecture/linux_assembly$ ld
+ld: no input files
+
