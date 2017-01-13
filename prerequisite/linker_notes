@@ -6,3 +6,7 @@ which permits programmers to write code using the more abstract names.
 "the location 612 bytes from the beginning of the executable code in module iosys."
 - it may take a more abstract numeric address such as "the location 450 bytes beyind 
 the beginning of the static data for this module" and bind it to a numeric address".
+
+Address Binding: A Historical Perspective
+-----------------------------------------
+
