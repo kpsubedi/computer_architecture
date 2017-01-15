@@ -1,0 +1,12 @@
+What do linkers and loaders do?
+
+- Basic job of any linker or loader is simple: it binds more abstract names to more concrete names, 
+which permits programmers to write code using the more abstract names.
+- For example, it takes a name written by a programmer such as getline and binds it to
+"the location 612 bytes from the beginning of the executable code in module iosys."
+- it may take a more abstract numeric address such as "the location 450 bytes beyind 
+the beginning of the static data for this module" and bind it to a numeric address".
+
+Address Binding: A Historical Perspective
+-----------------------------------------
+
