@@ -1,0 +1,302 @@
+
+Breakpoints, Examining Registers and Memory
+===========================================
+
+What is a Breakpoint?
+
+- Technique used to "Pause" the program during execution based on 
+certain criteria
+- Criteria can be "about to execute an instruction" (why you want to examine)
+- Debugger allows you to inspect/modify CPU Registers, Memory, Data etc
+
+Setting a Breakpoint in GDB
+---------------------------
+
+1. Multiple Options:
+- break <address>
+- break <function_name>
+- break <line_number>
+
+
+E.g.
+ex1.c
+
+$ gcc -ggdb ex1.c -o ex1
+$ ./ex1 architecture
+
+
+$ gdb ./ex1
+GNU gdb (Ubuntu 7.11.1-0ubuntu1~16.04) 7.11.1
+Copyright (C) 2016 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+<http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from ./ex1...done.
+
+(gdb) run architecture
+
+Starting program: /home/null/Documents/git_resource/computer_architecture/computer_architecture/prerequisite/ex1 architecture
+
+
+architecture
+
+[Inferior 1 (process 7638) exited with code 064]
+(gdb)
+
+(gdb) list 1
+1	#include <string.h>
+2	#include <stdio.h>
+3	
+4	void reply_back(char *userdata){
+5	    char buffer[20];
+6	    strcpy(buffer, userdata);
+7	    printf("\n\n%s\n\n", buffer);
+8	}
+9	
+10	int main(int argc, char **argv){
+(gdb) 
+11	    reply_back(argv[1]);
+12	    return 0x1234;
+13	}
+14	
+(gdb) 
+Line number 15 out of range; ex1.c has 14 lines
+
+(gdb) break main
+Breakpoint 1 at 0x400640: file ex1.c, line 11.
+
+(gdb) list 11
+6	    strcpy(buffer, userdata);
+7	    printf("\n\n%s\n\n", buffer);
+8	}
+9	
+10	int main(int argc, char **argv){
+11	    reply_back(argv[1]);
+12	    return 0x1234;
+13	}
+14	
+(gdb) run architecture 
+Starting program: /home/null/Documents/git_resource/computer_architecture/computer_architecture/prerequisite/ex1 architecture
+
+Breakpoint 1, main (argc=2, argv=0x7fffffffde18) at ex1.c:11
+11	    reply_back(argv[1]);
+
+
+(gdb) info registers
+rax            0x400631	4195889
+rbx            0x0	0
+rcx            0x0	0
+rdx            0x7fffffffde30	140737488346672
+rsi            0x7fffffffde18	140737488346648
+rdi            0x2	2
+rbp            0x7fffffffdd30	0x7fffffffdd30
+rsp            0x7fffffffdd20	0x7fffffffdd20
+r8             0x4006d0	4196048
+r9             0x7ffff7de78e0	140737351940320
+r10            0x846	2118
+r11            0x7ffff7a2e740	140737348036416
+r12            0x4004e0	4195552
+r13            0x7fffffffde10	140737488346640
+r14            0x0	0
+r15            0x0	0
+rip            0x400640	0x400640 <main+15>
+eflags         0x202	[ IF ]
+cs             0x33	51
+ss             0x2b	43
+ds             0x0	0
+es             0x0	0
+fs             0x0	0
+gs             0x0	0
+
+
+(gdb) break reply_back 
+Breakpoint 2 at 0x4005e2: file ex1.c, line 4.
+
+(gdb) info breakpoints 
+Num     Type           Disp Enb Address            What
+1       breakpoint     keep y   0x0000000000400640 in main at ex1.c:11
+	breakpoint already hit 1 time
+2       breakpoint     keep y   0x00000000004005e2 in reply_back at ex1.c:4
+
+Note: Both break points are enable and first is already hit 1
+
+We can disable break point. 
+
+(gdb) disable 1
+(gdb) info breakpoints 
+Num     Type           Disp Enb Address            What
+1       breakpoint     keep n   0x0000000000400640 in main at ex1.c:11
+	breakpoint already hit 1 time
+2       breakpoint     keep y   0x00000000004005e2 in reply_back at ex1.c:4
+
+(gdb) enable 1
+(gdb) info breakpoints 
+Num     Type           Disp Enb Address            What
+1       breakpoint     keep y   0x0000000000400640 in main at ex1.c:11
+	breakpoint already hit 1 time
+2       breakpoint     keep y   0x00000000004005e2 in reply_back at ex1.c:4
+
+
+Delete Breakpoint
+-----------------
+(gdb) delete 1
+(gdb) info breakpoints 
+Num     Type           Disp Enb Address            What
+2       breakpoint     keep y   0x00000000004005e2 in reply_back at ex1.c:4
+
+break points number doesn't change.
+
+(gdb) break main
+Breakpoint 3 at 0x400640: file ex1.c, line 11.
+(gdb) info breakpoints 
+Num     Type           Disp Enb Address            What
+2       breakpoint     keep y   0x00000000004005e2 in reply_back at ex1.c:4
+3       breakpoint     keep y   0x0000000000400640 in main at ex1.c:11
+
+
+Capability to examine Memory
+----------------------------
+(gdb) help x
+Examine memory: x/FMT ADDRESS.
+ADDRESS is an expression for the memory address to examine.
+FMT is a repeat count followed by a format letter and a size letter.
+Format letters are o(octal), x(hex), d(decimal), u(unsigned decimal),
+  t(binary), f(float), a(address), i(instruction), c(char), s(string)
+  and z(hex, zero padded on the left).
+Size letters are b(byte), h(halfword), w(word), g(giant, 8 bytes).
+The specified number of objects of the specified size are printed
+according to the format.
+
+Defaults for format and size letters are those previously used.
+Default count is 1.  Default address is following last thing printed
+with this command or "print".
+
+(gdb) print argv[1]
+$1 = 0x7fffffffe1fe "architecture"
+
+(gdb) print argv[0]
+$2 = 0x7fffffffe19f "/home/null/Documents/git_resource/computer_architecture/computer_architecture/prerequisite/ex1"
+
+which is absolute path of the program executable
+
+(gdb) x/s argv[1]
+0x7fffffffe1fe:	"architecture"
+(gdb) x/s argv[0]
+0x7fffffffe19f:	"/home/null/Documents/git_resource/computer_architecture/computer_architecture/prerequisite/ex1"
+
+(gdb) info registers 
+rax            0x400631	4195889
+rbx            0x0	0
+rcx            0x0	0
+rdx            0x7fffffffde30	140737488346672
+rsi            0x7fffffffde18	140737488346648
+rdi            0x2	2
+rbp            0x7fffffffdd30	0x7fffffffdd30
+rsp            0x7fffffffdd20	0x7fffffffdd20
+r8             0x4006d0	4196048
+r9             0x7ffff7de78e0	140737351940320
+r10            0x846	2118
+r11            0x7ffff7a2e740	140737348036416
+r12            0x4004e0	4195552
+r13            0x7fffffffde10	140737488346640
+r14            0x0	0
+r15            0x0	0
+rip            0x400640	0x400640 <main+15>
+eflags         0x202	[ IF ]
+cs             0x33	51
+ss             0x2b	43
+ds             0x0	0
+es             0x0	0
+fs             0x0	0
+gs             0x0	0
+
+----------
+rip ====> 0x400640
+We can disassamble funtion using
+(gdb) disassemble main
+Dump of assembler code for function main:
+   0x0000000000400631 <+0>:	push   %rbp
+   0x0000000000400632 <+1>:	mov    %rsp,%rbp
+   0x0000000000400635 <+4>:	sub    $0x10,%rsp
+   0x0000000000400639 <+8>:	mov    %edi,-0x4(%rbp)
+   0x000000000040063c <+11>:	mov    %rsi,-0x10(%rbp)
+=> 0x0000000000400640 <+15>:	mov    -0x10(%rbp),%rax
+   0x0000000000400644 <+19>:	add    $0x8,%rax
+   0x0000000000400648 <+23>:	mov    (%rax),%rax
+   0x000000000040064b <+26>:	mov    %rax,%rdi
+   0x000000000040064e <+29>:	callq  0x4005d6 <reply_back>
+   0x0000000000400653 <+34>:	mov    $0x1234,%eax
+   0x0000000000400658 <+39>:	leaveq 
+   0x0000000000400659 <+40>:	retq   
+End of assembler dump.
+
+=> shows where currently rip is pointing.
+(gdb) x/i 0x400640
+=> 0x400640 <main+15>:	mov    -0x10(%rbp),%rax
+
+(gdb) x/10i 0x400640
+=> 0x400640 <main+15>:	mov    -0x10(%rbp),%rax
+   0x400644 <main+19>:	add    $0x8,%rax
+   0x400648 <main+23>:	mov    (%rax),%rax
+   0x40064b <main+26>:	mov    %rax,%rdi
+   0x40064e <main+29>:	callq  0x4005d6 <reply_back>
+   0x400653 <main+34>:	mov    $0x1234,%eax
+   0x400658 <main+39>:	leaveq 
+   0x400659 <main+40>:	retq   
+   0x40065a:	nopw   0x0(%rax,%rax,1)
+   0x400660 <__libc_csu_init>:	push   %r15
+
+(gdb) x/10xw $rsp
+0x7fffffffdd20:	0xffffde18	0x00007fff	0x00000000	0x00000002
+0x7fffffffdd30:	0x00400660	0x00000000	0xf7a2e830	0x00007fff
+0x7fffffffdd40:	0x00000000	0x00000000
+
+(gdb) x/1xw argv
+0x7fffffffde18:	0xffffe19f
+
+
+(gdb) break *0x0000000000400653
+Breakpoint 4 at 0x400653: file ex1.c, line 12.
+(gdb) info breakpoints 
+Num     Type           Disp Enb Address            What
+2       breakpoint     keep y   0x00000000004005e2 in reply_back at ex1.c:4
+4       breakpoint     keep y   0x0000000000400653 in main at ex1.c:12
+
+(gdb) continue 
+Continuing.
+
+Breakpoint 2, reply_back (userdata=0x7fffffffe1fe "architecture") at ex1.c:4
+4	void reply_back(char *userdata){
+
+
+Continue until next break point hits.
+
+(gdb) stepi 
+per instruction basis
+
+(gdb) step
+per line basis
+
+(gdb) help step
+Step program until it reaches a different source line.
+Usage: step [N]
+Argument N means step N times (or till program stops for another reason).
+
+(gdb) help stepi
+Step one instruction exactly.
+Usage: stepi [N]
+Argument N means step N times (or till program stops for another reason).
+
+
+Modifying Register and Memory
+=============================
+
