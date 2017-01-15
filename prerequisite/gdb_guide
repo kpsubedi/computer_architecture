@@ -623,5 +623,115 @@ I Should not execute!!!
 [Inferior 1 (process 9286) exited normally]
 
 
+Convenience Variables and Calling Routines
+==========================================
+- create variables in GDB to hold data
+- set $x = 90
+- set $dynamic = (char *) malloc(10)
+- $demo = "architecture"
+- set argv[1] = $demo
+
+(gdb) set $i = 90
+(gdb) print $i
+$2 = 90
+(gdb) 
+
+(gdb) b main
+Note: breakpoint 1 also set at pc 0x40074d.
+Breakpoint 2 at 0x40074d: file ex2_withouterror.c, line 22.
+(gdb) run BBB 40 50
+Starting program: /home/null/Documents/git_resource/computer_architecture/computer_architecture/prerequisite/ex2_withouterror BBB 40 50
+
+Breakpoint 1, main (argc=4, argv=0x7fffffffddf8) at ex2_withouterror.c:22
+22	    int sum = 0;
+
+(gdb) print argv[1]
+$3 = 0x7fffffffe1f3 "BBB"
+(gdb) set $val = "CCCCC"
+(gdb) print $val
+$4 = "CCCCC"
+(gdb) set argv[1] = $val
+(gdb) print argv[1]
+$5 = 0x602010 "CCCCC"
+
+(gdb) c
+Continuing.
+
+
+CCCCC
+
+Sum of 40 + 50 is 90
+
+[Inferior 1 (process 9485) exited normally]
+
+(gdb) set $dyn_char = (char *)malloc(10)
+(gdb) print $dyn_char
+$6 = 0x602010 ""
+(gdb) x/10xb $dyn_char
+0x602010:	0x00	0x00	0x00	0x00	0x00	0x00	0x00	0x00
+0x602018:	0x00	0x00
+
+(gdb) print argv[1]
+$8 = 0x7fffffffe1f3 "BBB"
+(gdb) print $dyn_char
+$9 = 0x602010 ""
+(gdb) x/10xb $dyn_char
+0x602010:	0x00	0x00	0x00	0x00	0x00	0x00	0x00	0x00
+0x602018:	0x00	0x00
+(gdb) call strcpy($dyn_char, argv[1])
+$10 = 6299664
+(gdb) x/10xb $dyn_char
+0x602010:	0x42	0x42	0x42	0x00	0x00	0x00	0x00	0x00
+0x602018:	0x00	0x00
+
+(gdb) x/10c $dyn_char
+0x602010:	66 'B'	66 'B'	66 'B'	0 '\000'	0 '\000'	0 '\000'0 '\000'	0 '\000'
+0x602018:	0 '\000'	0 '\000'
+
+(gdb) set argv[1] = $dyn_char
+(gdb) print argv[1]
+$12 = 0x602010 "BBB"
+
+(gdb) info functions
+All defined functions:
+
+File ex2_withouterror.c:
+int get_sum(int, int);
+int main(int, char **);
+void reply_back(char *);
+void routineshouldnotrun(void);
+
+Non-debugging symbols:
+0x0000000000400508  _init
+0x0000000000400540  strcpy@plt
+0x0000000000400550  puts@plt
+0x0000000000400560  __stack_chk_fail@plt
+0x0000000000400570  printf@plt
+0x0000000000400580  __libc_start_main@plt
+0x0000000000400590  atoi@plt
+0x00000000004005a0  exit@plt
+0x00000000004005c0  _start
+0x00000000004005f0  deregister_tm_clones
+0x0000000000400630  register_tm_clones
+0x0000000000400670  __do_global_dtors_aux
+0x0000000000400690  frame_dummy
+0x00000000004007e0  __libc_csu_init
+0x0000000000400850  __libc_csu_fini
+0x0000000000400854  _fini
+
+
+
+(gdb) r
+Starting program: /home/null/Documents/git_resource/computer_architecture/computer_architecture/prerequisite/ex2_withouterror 
+
+Breakpoint 1, main (argc=1, argv=0x7fffffffde18) at ex2_withouterror.c:22
+22	    int sum = 0;
+(gdb) call get_sum(90, 100)
+$1 = 190
+
+(gdb) set $x = 80
+(gdb) set $y = 80
+(gdb) call get_sum($x, $y)
+$2 = 160
 
 
