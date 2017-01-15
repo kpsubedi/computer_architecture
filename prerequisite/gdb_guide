@@ -299,4 +299,329 @@ Argument N means step N times (or till program stops for another reason).
 
 Modifying Register and Memory
 =============================
+$ gcc -ggdb ex2.c -o ex2
+$ ./ex2 AAAA 10 20
+AAAA
+
+Sum of 10 + 20 is 30
+
+
+
+$ gdb ./ex2
+
+(gdb) break main
+Breakpoint 1 at 0x4006f6: file ex2.c, line 21.
+(gdb) run AAAA 20 30
+Starting program: /home/null/Documents/git_resource/computer_architecture/computer_architecture/prerequisite/ex2 AAAA 20 30
+
+Breakpoint 1, main (argc=4, argv=0x7fffffffde18) at ex2.c:21
+21	    int sum = 0;
+
+(gdb) print argv[1]
+$1 = 0x7fffffffe200 "AAAA"
+(gdb) print argv[2]
+$2 = 0x7fffffffe205 "20"
+(gdb) print argv[3]
+$3 = 0x7fffffffe208 "30"
+(gdb) x/s argv[1]
+0x7fffffffe200:	"AAAA"
+(gdb) x/s argv[2]
+0x7fffffffe205:	"20"
+(gdb) x/s argv[3]
+0x7fffffffe208:	"30"
+
+(gdb) x/5c argv[1]
+0x7fffffffe200:	65 'A'	65 'A'	65 'A'	65 'A'	0 '\000'
+
+at the end 0 '\000' is string termination character.
+
+
+(gdb) set {char} 0x7fffffffe200 = 'B'
+(gdb) x/5c argv[1]
+0x7fffffffe200:	66 'B'	65 'A'	65 'A'	65 'A'	0 '\000'
+
+(gdb) x/5c argv[1]
+0x7fffffffe200:	67 'C'	65 'A'	65 'A'	65 'A'	0 '\000'
+
+(gdb) x/5c argv[1]
+0x7fffffffe200:	67 'C'	0 '\000'	0 '\000'	0 '\000'	0 '\000'
+
+(gdb) set {int} 0x7fffffffe200 = 0
+(gdb) x/5c argv[1]
+0x7fffffffe200:	0 '\000'	0 '\000'	0 '\000'	0 '\000'	0 '\000'
+(gdb) set {int} 0x7fffffffe200 = 1
+(gdb) x/5c argv[1]
+0x7fffffffe200:	1 '\001'	0 '\000'	0 '\000'	0 '\000'	0 '\000'
+
+(gdb) set {char} 0x7fffffffe200 = 'B'
+(gdb) set {char} (0x7fffffffe200+1) = 'B'
+(gdb) set {char} (0x7fffffffe200+2) = 'B'
+(gdb) set {char} (0x7fffffffe200+3) = 'B'
+(gdb) x/5c argv[1]
+0x7fffffffe200:	66 'B'	66 'B'	66 'B'	66 'B'	0 '\000'
+
+(gdb) c
+Continuing.
+
+
+BBBB
+
+Sum of 20 + 30 is 50
+
+[Inferior 1 (process 8252) exited normally]
+
+(gdb) run AAAA 10 20
+Starting program: /home/null/Documents/git_resource/computer_architecture/computer_architecture/prerequisite/ex2 AAAA 10 20
+
+Breakpoint 1, main (argc=4, argv=0x7fffffffde18) at ex2.c:21
+21	    int sum = 0;
+
+
+(gdb) l
+16	    return x + y;
+17	}
+18	
+19	
+20	int main(int argc, char **argv){
+21	    int sum = 0;
+22	    reply_back(argv[1]);
+23	    sum = get_sum(atoi(argv[2]), atoi(argv[3]));
+24	    printf("Sum of %s + %s is %d\n\n", argv[2], argv[3], sum);
+25	    return 0;
+(gdb) 
+26	}
+27	
+
+
+Lets go ahead and set break point before printing sum.
+
+(gdb) break 24
+Breakpoint 2 at 0x400744: file ex2.c, line 24.
+
+(gdb) c
+Continuing.
+
+
+AAAA
+
+
+Breakpoint 2, main (argc=4, argv=0x7fffffffde18) at ex2.c:24
+24	    printf("Sum of %s + %s is %d\n\n", argv[2], argv[3], sum);
+(gdb) print sum
+$4 = 30
+
+(gdb) set sum = 5000
+(gdb) c
+Continuing.
+Sum of 10 + 20 is 5000
+
+[Inferior 1 (process 8515) exited normally]
+
+
+GDB also allows us to change CPU registers at run time.
+
+Lets determine the address of the functions using GDB.
+
+
+(gdb) info functions
+All defined functions:
+
+File ex2.c:
+int get_sum(int, int);
+int main(int, char **);
+void reply_back(char *);
+void routineshouldnotrun(void);
+
+Non-debugging symbols:
+0x00000000004004d0  _init
+0x0000000000400500  strcpy@plt
+0x0000000000400510  puts@plt
+0x0000000000400520  __stack_chk_fail@plt
+0x0000000000400530  printf@plt
+0x0000000000400540  __libc_start_main@plt
+0x0000000000400550  atoi@plt
+0x0000000000400570  _start
+0x00000000004005a0  deregister_tm_clones
+0x00000000004005e0  register_tm_clones
+0x0000000000400620  __do_global_dtors_aux
+0x0000000000400640  frame_dummy
+0x0000000000400780  __libc_csu_init
+0x00000000004007f0  __libc_csu_fini
+0x00000000004007f4  _fini
+
+(gdb) print routineshouldnotrun
+$1 = {void (void)} 0x400666 <routineshouldnotrun>
+
+(gdb) b main
+Breakpoint 1 at 0x4006f6: file ex2.c, line 21.
+(gdb) run AAAA 10 20
+Starting program: /home/null/Documents/git_resource/computer_architecture/computer_architecture/prerequisite/ex2 AAAA 10 20
+
+Breakpoint 1, main (argc=4, argv=0x7fffffffde18) at ex2.c:21
+21	    int sum = 0;
+(gdb) info registers 
+rax            0x4006e6	4196070
+rbx            0x0	0
+rcx            0x0	0
+rdx            0x7fffffffde40	140737488346688
+rsi            0x7fffffffde18	140737488346648
+rdi            0x4	4
+rbp            0x7fffffffdd30	0x7fffffffdd30
+rsp            0x7fffffffdd00	0x7fffffffdd00
+r8             0x4007f0	4196336
+r9             0x7ffff7de78e0	140737351940320
+r10            0x846	2118
+r11            0x7ffff7a2e740	140737348036416
+r12            0x400570	4195696
+r13            0x7fffffffde10	140737488346640
+r14            0x0	0
+r15            0x0	0
+rip            0x4006f6	0x4006f6 <main+16>
+eflags         0x206	[ PF IF ]
+cs             0x33	51
+ss             0x2b	43
+ds             0x0	0
+es             0x0	0
+fs             0x0	0
+gs             0x0	0
+
+
+Change the value of register as follows:
+(gdb) set $rax = 30
+(gdb) info registers 
+rax            0x1e	30
+rbx            0x0	0
+rcx            0x0	0
+rdx            0x7fffffffde40	140737488346688
+rsi            0x7fffffffde18	140737488346648
+rdi            0x4	4
+rbp            0x7fffffffdd30	0x7fffffffdd30
+rsp            0x7fffffffdd00	0x7fffffffdd00
+r8             0x4007f0	4196336
+r9             0x7ffff7de78e0	140737351940320
+r10            0x846	2118
+r11            0x7ffff7a2e740	140737348036416
+r12            0x400570	4195696
+r13            0x7fffffffde10	140737488346640
+r14            0x0	0
+r15            0x0	0
+rip            0x4006f6	0x4006f6 <main+16>
+eflags         0x206	[ PF IF ]
+cs             0x33	51
+ss             0x2b	43
+ds             0x0	0
+es             0x0	0
+fs             0x0	0
+gs             0x0	0
+
+(gdb) c
+Continuing.
+
+
+AAAA
+
+Sum of 10 + 20 is 30
+
+[Inferior 1 (process 9195) exited normally]
+
+
+(gdb) run AAAA 40 50
+Starting program: /home/null/Documents/git_resource/computer_architecture/computer_architecture/prerequisite/ex2 AAAA 40 50
+
+Breakpoint 1, main (argc=4, argv=0x7fffffffde18) at ex2.c:21
+21	    int sum = 0;
+(gdb) info registers 
+rax            0x4006e6	4196070
+rbx            0x0	0
+rcx            0x0	0
+rdx            0x7fffffffde40	140737488346688
+rsi            0x7fffffffde18	140737488346648
+rdi            0x4	4
+rbp            0x7fffffffdd30	0x7fffffffdd30
+rsp            0x7fffffffdd00	0x7fffffffdd00
+r8             0x4007f0	4196336
+r9             0x7ffff7de78e0	140737351940320
+r10            0x846	2118
+r11            0x7ffff7a2e740	140737348036416
+r12            0x400570	4195696
+r13            0x7fffffffde10	140737488346640
+r14            0x0	0
+r15            0x0	0
+rip            0x4006f6	0x4006f6 <main+16>
+eflags         0x206	[ PF IF ]
+cs             0x33	51
+ss             0x2b	43
+ds             0x0	0
+es             0x0	0
+fs             0x0	0
+gs             0x0	0
+
+The one of the interesting registers is rip, which holds the location of the
+instruction to be executed next.
+
+Lets change the value of the rip, whihc points to the address of the function
+routineshouldnotrun i.e. 0x400666.
+
+(gdb) c
+Continuing.
+
+
+I Should not execute!!!
+
+
+Program received signal SIGSEGV, Segmentation fault.
+0x00007fffffffde18 in ?? ()
+
+Example: ex2_withouterror.c
+$ gcc -ggdb ex2_withouterror.c -o ex2_withouterror
+
+$ gdb ./ex2_withouterror
+
+(gdb) b main
+Breakpoint 1 at 0x40074d: file ex2_withouterror.c, line 22.
+(gdb) info functions
+All defined functions:
+
+File ex2_withouterror.c:
+int get_sum(int, int);
+int main(int, char **);
+void reply_back(char *);
+void routineshouldnotrun(void);
+
+Non-debugging symbols:
+0x0000000000400508  _init
+0x0000000000400540  strcpy@plt
+0x0000000000400550  puts@plt
+0x0000000000400560  __stack_chk_fail@plt
+0x0000000000400570  printf@plt
+0x0000000000400580  __libc_start_main@plt
+0x0000000000400590  atoi@plt
+0x00000000004005a0  exit@plt
+0x00000000004005c0  _start
+0x00000000004005f0  deregister_tm_clones
+0x0000000000400630  register_tm_clones
+0x0000000000400670  __do_global_dtors_aux
+0x0000000000400690  frame_dummy
+0x00000000004007e0  __libc_csu_init
+0x0000000000400850  __libc_csu_fini
+0x0000000000400854  _fini
+(gdb) print routineshouldnotrun
+$1 = {void (void)} 0x4006b6 <routineshouldnotrun>
+
+(gdb) run AAA 30 40
+Starting program: /home/null/Documents/git_resource/computer_architecture/computer_architecture/prerequisite/ex2_withouterror AAA 30 40
+
+Breakpoint 1, main (argc=4, argv=0x7fffffffddf8) at ex2_withouterror.c:22
+22	    int sum = 0;
+(gdb) set $rip = 0x4006b6
+(gdb) c
+Continuing.
+
+
+I Should not execute!!!
+
+[Inferior 1 (process 9286) exited normally]
+
+
+
 
