@@ -1,0 +1,7 @@
+What is assembly language?
+
+- Low-levle programming language
+- communicate with processor
+- specific to processor family
+- An almost one-to-one correspondance with machine code
+
