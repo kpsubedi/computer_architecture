@@ -5,3 +5,68 @@ What is assembly language?
 - specific to processor family
 - An almost one-to-one correspondance with machine code
 
+Only speak binary 
+10010001100101010101
+10010001100101010101
+10010001100101010101
+
+We cannot speak binary language
+
+
+Different Processors - Different Assembly Language
+==================================================
+- Intel
+- ARM
+- MIPS
+
+Intel Architecture
+==================
+- IA-32
+- IA-64
+
+
+In this class we focus in IA-32 assembly.
+
+
+Question?
+
+1. Find CPU details on the Debain System
+2. How do you know if you are a 32/64 bit CPU?
+3. How do you know your CPUs additional capabilities such as FPU, MMX, SSE, SSE2, etc.
+
+
+
+
+IA-32 Instruction Sets
+======================
+- General Purpose Instructions
+- x87 FPU Instructions
+- MMX / SSE/ SSE2 /SSE3 / SSE4 Instructions
+- Other Instruction Set extensions
+
+
+Programming in Assembly
+=======================
+- NASM + LD for assembling and linking 
+- Executable in ELF format
+
+NASM Documentation:
+http://nasm.us/
+
+
+
+
+Invoking System Call with 0x80
+==============================
+EAX = System call number
+EBX = 1st argument
+ECX = 2nd argument
+EDX = 3rd argument
+ESI = 4th argument
+EDI = 5th argument
+
+
+nasm -f elf32 -o helloworld.o helloworld.asm
+ld -o helloworld helloworld.o
+
+
