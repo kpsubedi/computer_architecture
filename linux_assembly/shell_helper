@@ -1,0 +1,9 @@
+- compile sample.c program by disabling stack protector and enable execute in stact.
+
+gcc -fno-stack-protector -z execstack shellcode.c -o shellcode
+
+- get the first 20-line starting from main:
+
+objdump -D -M intel  $1 | grep -A20 main.:
+- get machine code from assembly 
+grep '[0-9a-f]:' | grep -v 'file' | cut -d: -f2|cut -d' ' -f1-6 | tr -s ' ' | tr '\t' ' ' | sed 's/ $//g' | sed 's/ /\x/g' | paste -d '' -s | sed 's/^// | sed s/$//g'
