@@ -5,3 +5,13 @@ Well-written computer programs tend to exhibit good locality.
 That is, they tend to reference data items that are near other 
 recently referenced data item, or that were recently referenced themselves.
 
+This tendency, known as the principle of locality, is an enduring concept 
+that has enormous impact on the design and performance of hardware and 
+software systems.
+
+
+Locality is typically described as having two distinct forms:
+1. Temporal Locality 
+2. Spatial Locality
+
+
