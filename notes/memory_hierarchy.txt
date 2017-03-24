@@ -1,0 +1,7 @@
+
+[Locality]
+
+Well-written computer programs tend to exhibit good locality.
+That is, they tend to reference data items that are near other 
+recently referenced data item, or that were recently referenced themselves.
+
