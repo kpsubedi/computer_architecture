@@ -14,4 +14,21 @@ Locality is typically described as having two distinct forms:
 1. Temporal Locality 
 2. Spatial Locality
 
+In a program with good temoral locality, a memory location that is 
+referenced once is likely to be references again multiple times in 
+the near future. 
+
+In a program with good spatial locality, if a memory location is 
+referenced once is likely to reference a nearby memory location in
+the near future.
+
+
+Programmers should understand the principle of locality because, 
+in general, <br>programs with good locality run faster than 
+programs with poor locality.</br>
+
+All levels of modern computer systems, from the hardware, to the 
+operating system, to application programs, are designed to exploit 
+locality. 
+
 
