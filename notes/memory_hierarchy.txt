@@ -27,6 +27,9 @@ Programmers should understand the principle of locality because,
 in general, <br>programs with good locality run faster than 
 programs with poor locality.</br>
 
+Alternatively, most programs do not access all code or data 
+uniformly.
+
 All levels of modern computer systems, from the hardware, to the 
 operating system, to application programs, are designed to exploit 
 locality. 
